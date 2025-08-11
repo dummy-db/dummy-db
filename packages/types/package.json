@@ -1,0 +1,24 @@
+{
+  "name": "@dummy-db/types",
+  "version": "0.1.0",
+  "description": "Type definitions for dummy-db",
+  "author": "CasperSocio (https://github.com/CasperSocio)",
+  "license": "MIT",
+  "scripts": {
+    "test": "tsc"
+  },
+  "files": [
+    "index.d.ts"
+  ],
+  "repository": {
+    "directory": "packages/types",
+    "type": "git",
+    "url": "git+https://github.com/dummy-db/dummy-db.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dummy-db/dummy-db/issues"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}
