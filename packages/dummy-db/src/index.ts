@@ -1,0 +1,6 @@
+export { collection } from './api/collection'
+export { createConfig } from './api/config'
+export { initializeDb } from './api/database'
+export { addDoc, deleteDoc, doc, getDoc, getDocs, setDoc } from './api/document'
+export { query, where } from './api/query'
+export { CollectionReference } from './core/collection'
