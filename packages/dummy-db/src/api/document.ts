@@ -24,7 +24,9 @@ export async function addDoc<ModelType extends DocumentData>(
 ): Promise<DocumentReference> {
   const id = randomUUID()
   const docRef = doc(reference, id)
-  await setDoc(docRef, data)
+
+  await _writeDocument<ModelType>(docRef, data)
+
   return docRef
 }
 
@@ -154,17 +156,7 @@ export async function setDoc<ModelType extends DocumentData>(
   docRef: DocumentReference,
   data: ModelType,
 ): Promise<void> {
-  const timestamp = new Date().toISOString()
-  const record: Record<ModelType> = {
-    data,
-    id: docRef.id,
-    meta: {
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    },
-  }
-  const json = JSON.stringify(record)
-  await writeFile(docRef.path, json, 'utf-8')
+  await _writeDocument<ModelType>(docRef, data)
 }
 
 async function _getDocsFromCollection<ModelType extends DocumentData>(
@@ -233,4 +225,35 @@ function _sortById(a: string, b: string): number {
   const isNumB = /^\d+$/.test(b)
   if (isNumA && isNumB) return parseInt(a, 10) - parseInt(b, 10)
   return a.localeCompare(b)
+}
+
+async function _writeDocument<ModelType extends DocumentData>(
+  reference: DocumentReference,
+  data: ModelType,
+): Promise<void> {
+  const timestamp = new Date().toISOString()
+
+  let snap: DocumentSnapshot<ModelType>
+  try {
+    const raw = await readFile(reference.path, 'utf-8')
+    snap = new DocumentSnapshot<ModelType>(reference, raw)
+  } catch {
+    snap = new DocumentSnapshot<ModelType>(reference, undefined)
+  }
+
+  const record: Record<ModelType> = {
+    data,
+    id: reference.id,
+    meta: {
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    },
+  }
+
+  if (snap.exists()) {
+    record.meta.createdAt = snap.metadata().createdAt
+  }
+
+  const json = JSON.stringify(record)
+  await writeFile(reference.path, json, 'utf-8')
 }
