@@ -159,6 +159,33 @@ export async function setDoc<ModelType extends DocumentData>(
   await _writeDocument<ModelType>(docRef, data)
 }
 
+/**
+ * Updates an existing document with the provided data.
+ *
+ * This function merges the provided data with the existing document data.
+ * If the document does not exist, it throws an error.
+ *
+ * @param reference - The DocumentReference of the document to update.
+ * @param data - The partial data to update in the document.
+ * @returns A promise that resolves when the document is successfully updated.
+ * @throws An error if the document does not exist or if there is an issue writing the document file.
+ */
+export async function updateDoc<ModelType extends DocumentData>(
+  reference: DocumentReference,
+  data: Partial<ModelType>,
+): Promise<void> {
+  const raw = await readFile(reference.path, 'utf-8')
+  const snap = new DocumentSnapshot<ModelType>(reference, raw)
+
+  if (!snap.exists())
+    throw new Error(`Document ${reference.id} does not exist.`)
+
+  await _writeDocument<ModelType>(reference, {
+    ...snap.data(),
+    ...data,
+  })
+}
+
 async function _getDocsFromCollection<ModelType extends DocumentData>(
   collection: CollectionReference,
 ): Promise<DocumentSnapshot<ModelType>[]> {
