@@ -51,6 +51,17 @@ export async function deleteDoc(docRef: DocumentReference): Promise<void> {
   }
 }
 
+/**
+ * Creates a new DocumentReference for the specified collection and document ID.
+ *
+ * This function is used to create a reference to a document within a collection.
+ * It does not create the document itself; it simply provides a reference that can
+ * be used to read or write data.
+ *
+ * @param collection - The CollectionReference where the document will reside.
+ * @param id - The unique identifier for the document.
+ * @returns A DocumentReference for the specified document in the collection.
+ */
 export function doc(
   collection: CollectionReference,
   id: string,
@@ -58,6 +69,15 @@ export function doc(
   return new DocumentReference(collection, id)
 }
 
+/**
+ * Retrieves a document snapshot from the database.
+ *
+ * If the document does not exist, it returns a DocumentSnapshot with undefined data.
+ *
+ * @param docRef - The DocumentReference of the document to retrieve.
+ * @returns A promise that resolves to a DocumentSnapshot containing the document data.
+ * @throws An error if there is an issue reading the document file.
+ */
 export async function getDoc<ModelType extends DocumentData>(
   docRef: DocumentReference,
 ): Promise<DocumentSnapshot<ModelType>> {
@@ -72,6 +92,15 @@ export async function getDoc<ModelType extends DocumentData>(
   }
 }
 
+/**
+ * Retrieves all documents from a collection or query.
+ *
+ * If the source is a Query, it applies the filters defined in the query.
+ * If no documents match the filters, it returns an empty array.
+ *
+ * @param source - The CollectionReference or Query from which to retrieve documents.
+ * @returns A promise that resolves to an array of DocumentSnapshot objects.
+ */
 export async function getDocs<ModelType extends DocumentData>(
   source: CollectionReference | Query<ModelType>,
 ): Promise<DocumentSnapshot<ModelType>[]> {
@@ -108,6 +137,19 @@ export async function getDocs<ModelType extends DocumentData>(
   })
 }
 
+/**
+ * Adds a new document using the provided DocumentReference and data.
+ *
+ * This function allows you to create a document with a specific ID.
+ * If the document already exists, it will be overwritten.
+ *
+ * If you want to generate a random ID, use `addDoc` instead.
+ *
+ * @param docRef - The DocumentReference where the document will be created.
+ * @param data - The data to be stored in the new document.
+ * @returns A promise that resolves when the document is successfully created.
+ * @throws An error if there is an issue writing the document file.
+ */
 export async function setDoc<ModelType extends DocumentData>(
   docRef: DocumentReference,
   data: ModelType,
